@@ -50,6 +50,6 @@ int main(void)
 
 //	file = 0;
 	file = open("test.txt", O_RDONLY);
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 1; i++)
 		printf("%s", get_next_line(file));
 }
