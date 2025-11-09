@@ -1,0 +1,22 @@
+FILE
+
+this is a test
+this is the second line
+this is the end
+
+
+
+BUFFER  size 15
+
+ond line
+this 
+
+
+BUILDER
+
+this is the second line
+this 
+
+
+LINE
+
