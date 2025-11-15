@@ -82,11 +82,6 @@ char	*ft_get_line(char *cache, int line_len)
 
 	i = 0;
 	line = malloc(line_len + 1);
-	/*if (!line)
-	{
-		free(cache);
-		return (NULL);
-	}*/
 	while (cache[i] != '\n' && cache[i] != '\0')
 	{
 		line[i] = cache[i];
@@ -129,7 +124,7 @@ char	*del_and_free(char *cache, int line_len)
 		free(cache);
 	return (new_cache);
 }
-/*
+
 int main(void)
 {
 	int		file;
@@ -154,4 +149,4 @@ int main(void)
 		i++;
 	}	
 	free(line);
-}*/
+}
