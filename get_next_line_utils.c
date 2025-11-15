@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/04 13:24:36 by razevedo          #+#    #+#             */
-/*   Updated: 2025/11/10 14:32:20 by razevedo         ###   ########.fr       */
+/*   Updated: 2025/11/14 15:54:30 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ char	*ft_strchr(const char *s, int c)
 	return (NULL);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(char *s1, char *s2)
 {
 	char			*new_string;
 	unsigned int	len;
@@ -58,10 +58,11 @@ char	*ft_strjoin(char const *s1, char const *s2)
 		j++;
 	}
 	new_string[i] = '\0';
+	free(s1);
 	return (new_string);
 }
 
-char	*ft_substr(char const *s, unsigned int start, size_t len)
+char	*ft_substr(char *s, unsigned int start, size_t len)
 {
 	char		*substring;
 	size_t		i;
