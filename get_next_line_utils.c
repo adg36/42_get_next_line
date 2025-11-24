@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/04 13:24:36 by razevedo          #+#    #+#             */
-/*   Updated: 2025/11/14 15:54:30 by razevedo         ###   ########.fr       */
+/*   Updated: 2025/11/18 14:17:25 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,10 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 	if (s == NULL)
 		return (NULL);
 	if (start >= ft_strlen(s))
-		return (ft_strdup(""));
+	{
+		s = NULL;
+		return (s);
+	}
 	if (start + len > ft_strlen(s))
 		len = ft_strlen(s) - start;
 	substring = malloc(len + 1);

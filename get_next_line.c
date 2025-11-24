@@ -6,7 +6,7 @@
 /*   By: razevedo <razevedo@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/04 13:23:14 by razevedo          #+#    #+#             */
-/*   Updated: 2025/11/14 16:05:26 by razevedo         ###   ########.fr       */
+/*   Updated: 2025/11/18 15:26:28 by razevedo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,61 +18,58 @@
 
 char	*ft_get_line(char *cache, int line_len);
 char	*del_and_free(char *cache, int line_len);
-int		get_line_length(char *cache);
+int		error_handling(int fd, ssize_t bytes_read, char *buffer, char **cache);
 
 char	*get_next_line(int fd)
 {
 	char		*buffer;
-	ssize_t		bytes_read;
 	char		*line;
+	ssize_t		bytes_read;
 	int			line_len;
 	static char	*cache;
 
 	if (fd == -1 || BUFFER_SIZE <= 0)
 		return (NULL);
 	buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
-	if (!buffer)
-		return (NULL);
 	bytes_read = 1;
+	if (error_handling(fd, bytes_read, buffer, &cache) == 1)
+		return (NULL);
+	if (!ft_strchr(cache, 10))
+		line_len = ft_strlen(cache);
+	else
+		line_len = ft_strchr(cache, 10) - cache + 1;
+	line = ft_get_line(cache, line_len);
+	cache = del_and_free(cache, line_len);
+	return (free(buffer), line);
+}
+
+int	error_handling(int fd, ssize_t bytes_read, char *buffer, char **cache)
+{
 	while (bytes_read > 0)
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
-		if (!cache && bytes_read > 0)
-			cache = ft_strdup(buffer);
-		else
+		if (bytes_read == 0 && (!*cache || **cache == '\0'))
+			return (free(buffer), 1);
+		if (bytes_read == -1)
 		{
-			if (bytes_read > 0)
+			free(*cache);
+			*cache = NULL;
+			return (free(buffer), 1);
+		}
+		if (bytes_read > 0)
+		{
+			if (!*cache)
+				*cache = ft_strdup(buffer);
+			else
 			{
 				buffer[bytes_read] = 0;
-				cache = ft_strjoin(cache, buffer);
+				*cache = ft_strjoin(*cache, buffer);
 			}
-			else
-				break ;
 		}
 		if (ft_strchr(buffer, 10))
 			break ;
 	}
-	if (bytes_read <= 0)
-	{
-		if (!cache || *cache == '\0')
-		{
-			free(buffer);
-			return (NULL);
-		}
-	}
-	line_len = get_line_length(cache);
-	line = ft_get_line(cache, line_len);
-	cache = del_and_free(cache, line_len);
-	free(buffer);
-	return (line);
-}
-
-int		get_line_length(char *cache)
-{
-	if (!ft_strchr(cache, 10))
-		return (ft_strlen(cache));
-	else
-		return (ft_strchr(cache, 10) - cache + 1);
+	return (0);
 }
 
 char	*ft_get_line(char *cache, int line_len)
@@ -82,6 +79,11 @@ char	*ft_get_line(char *cache, int line_len)
 
 	i = 0;
 	line = malloc(line_len + 1);
+	if (!line)
+	{
+		cache = NULL;
+		return (NULL);
+	}
 	while (cache[i] != '\n' && cache[i] != '\0')
 	{
 		line[i] = cache[i];
@@ -120,9 +122,39 @@ char	*del_and_free(char *cache, int line_len)
 	char	*new_cache;
 
 	new_cache = ft_substr(cache, line_len, ft_strlen(cache) - line_len);
-	if (cache != NULL)
-		free(cache);
+	free(cache);
 	return (new_cache);
+}
+/*
+int main(void)
+{
+	char	*line;
+
+	while ((line = get_next_line(0)) != NULL) // 0 = stdin
+	{
+		printf("LINE: %s", line);
+		free(line);
+	}
+	return (0);
+}
+
+
+
+int	main(void)
+{
+	int			fd_test;
+	char	*str;
+
+	fd_test = open("one_line_no_nl.txt", O_RDONLY);
+	while (1)
+	{
+		str = get_next_line(fd_test);
+		printf("lap: >%s<\n",str);
+		if (str == NULL)
+			break;
+		free(str);
+	}
+	return (0);
 }
 
 int main(void)
@@ -131,14 +163,12 @@ int main(void)
 	char	*line;
 	int		i;
 
-//	file = 0;
 	file = open("1char.txt", O_RDONLY);
 	if (!file)
 	{
 		printf("Could not open file.");
 		return (1);
 	}
-	// for (int i = 0; i < 10; i++)
 	i = 0;
 	line = get_next_line(file);
 	while (line)
@@ -147,6 +177,10 @@ int main(void)
 		free(line);
 		line = get_next_line(file);
 		i++;
-	}	
+	}
+	printf("Line %i: >%s<\n", i, line);
 	free(line);
-}
+	line = get_next_line(file);
+	i++;
+	free(line);
+}*/
